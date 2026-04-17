@@ -722,15 +722,16 @@
         jaw.classList.remove('jaw-laughing');
         await wait(80);
 
-        // Jaw drops open
-        jaw.style.transition = 'transform 0.25s ease-out';
-        jaw.style.transform  = 'translateY(58px)';
-        await wait(340);
+        // Upper skull rises above the card, jaw stays in place
+        const skullTop = document.getElementById('skullTop');
+        skullTop.style.transition = 'transform 0.28s ease-out';
+        skullTop.style.transform  = 'translateY(-110px)';
+        await wait(380);
 
-        // CHOMP
+        // CHOMP — skull top slams down, jaw never moved
         playChomp();
-        jaw.style.transition = 'transform 0.07s ease-in';
-        jaw.style.transform  = 'translateY(0)';
+        skullTop.style.transition = 'transform 0.07s ease-in';
+        skullTop.style.transform  = 'translateY(0)';
 
         // Card gets devoured
         cardEl.style.transition = 'transform 0.12s ease-in, opacity 0.12s ease-in';
@@ -746,9 +747,11 @@
         await wait(500);
 
         // Cleanup
-        rig.style.display    = 'none';
-        jaw.style.transform  = '';
-        jaw.style.transition = '';
+        rig.style.display         = 'none';
+        jaw.style.transform       = '';
+        jaw.style.transition      = '';
+        skullTop.style.transform  = '';
+        skullTop.style.transition = '';
 
         // Restore card (already drawn, grid handles visual — center display stays)
         cardEl.style.transform  = '';
