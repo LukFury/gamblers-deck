@@ -681,6 +681,11 @@
 
     // ── NAT 1 — Skull chomp ───────────────────────────────────────
     async function nat1Effect() {
+        // Scroll to top and lock so fixed positioning is reliable
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        await wait(320);   // let scroll settle
+        document.body.style.overflow = 'hidden';
+
         const cardEl = document.getElementById('drawnCard');
         const jaw    = document.getElementById('skullJaw');
         const rig    = document.getElementById('skullRig');
@@ -749,6 +754,9 @@
         cardEl.style.transform  = '';
         cardEl.style.opacity    = '1';
         cardEl.style.transition = '';
+
+        // Unlock scrolling
+        document.body.style.overflow = '';
     }
 
     // ── NAT 20 — Gold dust ────────────────────────────────────────
