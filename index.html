@@ -29,18 +29,17 @@
             z-index: 0;
         }
 
-        /* ── Name entry overlay ── */
+        /* ── Name overlay ── */
         #nameOverlay {
             position: fixed;
             inset: 0;
-            background: rgba(5, 3, 1, 0.92);
+            background: rgba(5,3,1,0.92);
             display: flex;
             align-items: center;
             justify-content: center;
             z-index: 100;
             backdrop-filter: blur(3px);
         }
-
         #nameOverlay.hidden { display: none; }
 
         .name-box {
@@ -57,7 +56,6 @@
             box-shadow: 0 0 60px rgba(201,162,39,0.2), 0 20px 60px rgba(0,0,0,0.9);
             position: relative;
         }
-
         .name-box::before {
             content: '';
             position: absolute;
@@ -66,7 +64,6 @@
             border-radius: 8px;
             pointer-events: none;
         }
-
         .name-box h2 {
             font-family: 'Cinzel', serif;
             font-size: 1.5rem;
@@ -76,7 +73,6 @@
             text-align: center;
             text-shadow: 0 0 20px rgba(201,162,39,0.4);
         }
-
         .name-box p {
             font-style: italic;
             color: #6b5530;
@@ -84,7 +80,6 @@
             text-align: center;
             line-height: 1.5;
         }
-
         #nameInput {
             font-family: 'Crimson Text', serif;
             font-size: 1.1rem;
@@ -99,14 +94,8 @@
             outline: none;
             transition: border-color 0.2s, box-shadow 0.2s;
         }
-
-        #nameInput:focus {
-            border-color: #c9a227;
-            box-shadow: 0 0 12px rgba(201,162,39,0.2);
-        }
-
+        #nameInput:focus { border-color: #c9a227; box-shadow: 0 0 12px rgba(201,162,39,0.2); }
         #nameInput::placeholder { color: #3a2e1a; }
-
         .btn-enter {
             font-family: 'Cinzel', serif;
             font-size: 0.9rem;
@@ -149,12 +138,7 @@
             color: #6b5530;
             text-transform: uppercase;
         }
-
-        .player-banner .player-name {
-            color: #c9a227;
-            font-size: 0.88rem;
-        }
-
+        .player-banner .player-name { color: #c9a227; font-size: 0.88rem; }
         .btn-change-name {
             background: none;
             border: none;
@@ -181,7 +165,6 @@
             text-shadow: 0 0 30px rgba(201,162,39,0.45), 0 2px 6px rgba(0,0,0,0.9);
             margin-bottom: 5px;
         }
-
         .subtitle {
             font-style: italic;
             color: #6b5530;
@@ -229,7 +212,6 @@
             position: relative;
             overflow: hidden;
         }
-
         .drawn-card::before {
             content: '';
             position: absolute;
@@ -238,7 +220,6 @@
             border-radius: 7px;
             pointer-events: none;
         }
-
         .corner {
             position: absolute;
             font-family: 'Cinzel', serif;
@@ -259,7 +240,6 @@
             text-shadow: 0 0 24px rgba(232,200,66,0.55), 0 2px 8px rgba(0,0,0,0.9);
             line-height: 1;
         }
-
         .card-number.empty {
             font-size: 2.5rem;
             color: #2e2410;
@@ -267,7 +247,6 @@
             font-style: italic;
             font-family: 'Crimson Text', serif;
         }
-
         .card-sublabel {
             font-style: italic;
             font-size: 0.8rem;
@@ -321,7 +300,6 @@
             text-align: center;
             margin-bottom: 12px;
         }
-
         .card-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
@@ -329,7 +307,6 @@
             width: 100%;
             max-width: 340px;
         }
-
         .gc {
             aspect-ratio: 3/4;
             border: 1px solid #2e2410;
@@ -347,13 +324,11 @@
             transition: border-color 0.3s, color 0.3s, background 0.3s;
             user-select: none;
         }
-
         .gc.drawn {
             background: linear-gradient(150deg, #0e0a04, #0a0703);
             border-color: #1a1208;
             color: transparent;
         }
-
         .gc.drawn::after {
             content: '✕';
             position: absolute;
@@ -362,7 +337,6 @@
             font-family: sans-serif;
             font-weight: 300;
         }
-
         .gc.last {
             border-color: #c9a227;
             box-shadow: 0 0 10px rgba(201,162,39,0.3), inset 0 1px 4px rgba(0,0,0,0.6);
@@ -377,7 +351,6 @@
             flex-direction: column;
             gap: 5px;
         }
-
         .log-entry {
             font-size: 0.95rem;
             color: #5a4520;
@@ -416,6 +389,53 @@
         }
         .drawn-card.pop { animation: cardReveal 0.42s cubic-bezier(0.22, 0.61, 0.36, 1) forwards; }
 
+        /* ── Skull rig ── */
+        #skullRig {
+            position: fixed;
+            z-index: 60;
+            pointer-events: none;
+            display: none;
+            /* top/left set by JS */
+        }
+        #skullContainer {
+            position: relative;
+            width: 200px;
+        }
+        #skullTop {
+            width: 200px;
+            display: block;
+            filter: drop-shadow(0 6px 16px rgba(0,0,0,0.9));
+        }
+        #skullJaw {
+            width: 200px;
+            position: absolute;
+            /* top set by JS after image loads */
+            left: 0;
+            transform-origin: top center;
+            filter: drop-shadow(0 4px 8px rgba(0,0,0,0.9));
+        }
+
+        @keyframes jawLaugh {
+            0%   { transform: translateY(0px); }
+            30%  { transform: translateY(22px); }
+            60%  { transform: translateY(4px); }
+            80%  { transform: translateY(18px); }
+            100% { transform: translateY(0px); }
+        }
+        .jaw-laughing { animation: jawLaugh 0.55s ease-in-out 3; }
+
+        /* ── Particle canvas ── */
+        #particleCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 50;
+            display: none;
+        }
+
         /* ── Footer ── */
         .footer-note {
             font-style: italic;
@@ -438,9 +458,19 @@
     </div>
 </div>
 
+<!-- Skull rig (nat 1 effect) -->
+<div id="skullRig">
+    <div id="skullContainer">
+        <img id="skullTop" src="skull.png" alt="">
+        <img id="skullJaw" src="jaw.png" alt="">
+    </div>
+</div>
+
+<!-- Gold particle canvas (nat 20 effect) -->
+<canvas id="particleCanvas"></canvas>
+
 <div class="container">
 
-    <!-- Player banner -->
     <div class="player-banner">
         <span>Playing as</span>
         <span class="player-name" id="playerNameDisplay"></span>
@@ -486,31 +516,40 @@
 </div>
 
 <script>
-    const STORAGE_KEY = 'gamblers_deck_state';
+    // ── Constants ────────────────────────────────────────────────
+    const STORAGE_KEY  = 'gamblers_deck_state';
+    const SKULL_W      = 200;   // display width for both skull parts
+    // jaw top offset within the rig — tweak if jaw doesn't align
+    const JAW_OFFSET   = 182;
 
-    let remaining = [];
-    let drawn     = [];
-    let log       = [];
-    let lastDrawn = null;
+    // ── State ────────────────────────────────────────────────────
+    let remaining  = [];
+    let drawn      = [];
+    let log        = [];
+    let lastDrawn  = null;
     let playerName = '';
+    let animating  = false;
+
+    // ── Jaw setup ────────────────────────────────────────────────
+    document.getElementById('skullJaw').style.top = JAW_OFFSET + 'px';
 
     // ── Persistence ──────────────────────────────────────────────
-
     function saveState() {
-        const state = { remaining, drawn, log, lastDrawn, playerName };
-        try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch(e) {}
+        try {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(
+                { remaining, drawn, log, lastDrawn, playerName }
+            ));
+        } catch(e) {}
     }
 
     function loadState() {
         try {
             const raw = localStorage.getItem(STORAGE_KEY);
-            if (!raw) return null;
-            return JSON.parse(raw);
+            return raw ? JSON.parse(raw) : null;
         } catch(e) { return null; }
     }
 
     // ── Name handling ─────────────────────────────────────────────
-
     function submitName() {
         const val = document.getElementById('nameInput').value.trim();
         if (!val) return;
@@ -526,13 +565,11 @@
         document.getElementById('nameInput').focus();
     }
 
-    // Allow Enter key to submit name
     document.getElementById('nameInput').addEventListener('keydown', e => {
         if (e.key === 'Enter') submitName();
     });
 
     // ── Deck logic ────────────────────────────────────────────────
-
     function freshDeck() {
         remaining = Array.from({ length: 20 }, (_, i) => i + 1);
         drawn     = [];
@@ -541,7 +578,7 @@
     }
 
     function drawCard() {
-        if (remaining.length === 0) return;
+        if (remaining.length === 0 || animating) return;
 
         const idx  = Math.floor(Math.random() * remaining.length);
         const card = remaining.splice(idx, 1)[0];
@@ -565,9 +602,13 @@
 
         saveState();
         render();
+
+        if (card === 1)  { animating = true; nat1Effect().then(() => { animating = false; }); }
+        if (card === 20) { animating = true; nat20Effect().then(() => { animating = false; }); }
     }
 
     function longRest() {
+        if (animating) return;
         freshDeck();
 
         const numEl = document.getElementById('cardNumber');
@@ -583,7 +624,6 @@
     }
 
     // ── Render ────────────────────────────────────────────────────
-
     function render() {
         renderGrid();
         renderLog();
@@ -636,23 +676,242 @@
             drawn.length === 1 ? 'first draw' : `draw #${drawn.length}`;
     }
 
-    // ── Init ──────────────────────────────────────────────────────
+    // ── Utility ───────────────────────────────────────────────────
+    function wait(ms) { return new Promise(r => setTimeout(r, ms)); }
 
+    // ── NAT 1 — Skull chomp ───────────────────────────────────────
+    async function nat1Effect() {
+        const cardEl = document.getElementById('drawnCard');
+        const jaw    = document.getElementById('skullJaw');
+        const rig    = document.getElementById('skullRig');
+        const rect   = cardEl.getBoundingClientRect();
+
+        const rigH   = JAW_OFFSET + 80;   // approx total rig height
+        const cx     = rect.left + rect.width  / 2 - SKULL_W / 2;
+        const cy     = rect.top  + rect.height / 2 - rigH    / 2;
+
+        // Reset jaw inline style and position rig off-screen above
+        jaw.style.transform  = '';
+        jaw.style.transition = '';
+        jaw.classList.remove('jaw-laughing');
+
+        rig.style.cssText = `
+            display: block;
+            left: ${cx}px;
+            top:  ${cy}px;
+            opacity: 0;
+            transform: translateY(-160px) scale(0.5);
+            transition: none;
+        `;
+        void rig.offsetWidth;
+
+        // Fly in
+        rig.style.transition = 'transform 0.45s cubic-bezier(0.22,0.61,0.36,1), opacity 0.35s ease';
+        rig.style.transform  = 'translateY(0) scale(1)';
+        rig.style.opacity    = '1';
+        await wait(520);
+
+        // Laugh — jaw bounces 3 cycles
+        jaw.classList.add('jaw-laughing');
+        await wait(1700);
+        jaw.classList.remove('jaw-laughing');
+        await wait(80);
+
+        // Jaw drops open
+        jaw.style.transition = 'transform 0.25s ease-out';
+        jaw.style.transform  = 'translateY(58px)';
+        await wait(340);
+
+        // CHOMP
+        playChomp();
+        jaw.style.transition = 'transform 0.07s ease-in';
+        jaw.style.transform  = 'translateY(0)';
+
+        // Card gets devoured
+        cardEl.style.transition = 'transform 0.12s ease-in, opacity 0.12s ease-in';
+        cardEl.style.transform  = 'scale(0.55)';
+        cardEl.style.opacity    = '0';
+
+        await wait(380);
+
+        // Skull exits upward
+        rig.style.transition = 'transform 0.38s ease-in, opacity 0.28s 0.08s ease-in';
+        rig.style.transform  = 'translateY(-200px) scale(0.45)';
+        rig.style.opacity    = '0';
+        await wait(500);
+
+        // Cleanup
+        rig.style.display    = 'none';
+        jaw.style.transform  = '';
+        jaw.style.transition = '';
+
+        // Restore card (already drawn, grid handles visual — center display stays)
+        cardEl.style.transform  = '';
+        cardEl.style.opacity    = '1';
+        cardEl.style.transition = '';
+    }
+
+    // ── NAT 20 — Gold dust ────────────────────────────────────────
+    async function nat20Effect() {
+        playSlotMachine();
+
+        const canvas = document.getElementById('particleCanvas');
+        const ctx    = canvas.getContext('2d');
+        canvas.width  = window.innerWidth;
+        canvas.height = window.innerHeight;
+        canvas.style.display = 'block';
+
+        const COLORS = ['#c9a227','#e8c842','#f5d060','#d4a820','#ffe566','#c8861a'];
+        const particles = [];
+
+        for (let i = 0; i < 90; i++) {
+            const isRect = Math.random() > 0.45;
+            particles.push({
+                x:        Math.random() * canvas.width,
+                y:        -10 - Math.random() * 120,
+                vx:       (Math.random() - 0.5) * 2.2,
+                vy:       1.2 + Math.random() * 2.8,
+                size:     isRect ? 3 + Math.random() * 5 : 2 + Math.random() * 4,
+                color:    COLORS[Math.floor(Math.random() * COLORS.length)],
+                alpha:    0.9 + Math.random() * 0.1,
+                rotation: Math.random() * Math.PI * 2,
+                rotSpeed: (Math.random() - 0.5) * 0.18,
+                isRect,
+            });
+        }
+
+        function frame() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            let anyAlive = false;
+
+            for (const p of particles) {
+                p.x        += p.vx;
+                p.y        += p.vy;
+                p.vy       += 0.06;   // gravity
+                p.rotation += p.rotSpeed;
+                p.alpha    -= 0.006;
+
+                if (p.alpha <= 0 || p.y > canvas.height) continue;
+                anyAlive = true;
+
+                ctx.save();
+                ctx.globalAlpha = Math.max(0, p.alpha);
+                ctx.fillStyle   = p.color;
+                ctx.translate(p.x, p.y);
+                ctx.rotate(p.rotation);
+
+                if (p.isRect) {
+                    ctx.fillRect(-p.size / 2, -p.size, p.size, p.size * 2.2);
+                } else {
+                    ctx.beginPath();
+                    ctx.arc(0, 0, p.size, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+                ctx.restore();
+            }
+
+            if (anyAlive) requestAnimationFrame(frame);
+            else canvas.style.display = 'none';
+        }
+
+        requestAnimationFrame(frame);
+        await wait(2800);   // resolve after particles fade
+    }
+
+    // ── Sounds (Web Audio API) ────────────────────────────────────
+
+    function playChomp() {
+        try {
+            const ac = new (window.AudioContext || window.webkitAudioContext)();
+
+            // Low bone-impact thud
+            const osc  = ac.createOscillator();
+            const gain = ac.createGain();
+            osc.connect(gain);
+            gain.connect(ac.destination);
+            osc.type = 'sawtooth';
+            osc.frequency.setValueAtTime(130, ac.currentTime);
+            osc.frequency.exponentialRampToValueAtTime(28, ac.currentTime + 0.2);
+            gain.gain.setValueAtTime(0.7, ac.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, ac.currentTime + 0.25);
+            osc.start(ac.currentTime);
+            osc.stop(ac.currentTime + 0.25);
+
+            // Teeth clack — filtered noise burst
+            const bufLen = Math.floor(ac.sampleRate * 0.07);
+            const buf    = ac.createBuffer(1, bufLen, ac.sampleRate);
+            const data   = buf.getChannelData(0);
+            for (let i = 0; i < bufLen; i++) {
+                data[i] = (Math.random() * 2 - 1) * (1 - i / bufLen);
+            }
+            const noise      = ac.createBufferSource();
+            noise.buffer     = buf;
+            const filt       = ac.createBiquadFilter();
+            filt.type        = 'bandpass';
+            filt.frequency.value = 2800;
+            filt.Q.value         = 2.5;
+            const ng         = ac.createGain();
+            ng.gain.value    = 0.35;
+            noise.connect(filt);
+            filt.connect(ng);
+            ng.connect(ac.destination);
+            noise.start(ac.currentTime);
+        } catch(e) {}
+    }
+
+    function playSlotMachine() {
+        try {
+            const ac = new (window.AudioContext || window.webkitAudioContext)();
+
+            // Click intervals: medium → fast → slow
+            const gaps = [0.13, 0.10, 0.08, 0.06, 0.05, 0.04, 0.04, 0.04,
+                          0.05, 0.07, 0.09, 0.12, 0.15, 0.18, 0.21];
+            let t = 0;
+            gaps.forEach(gap => {
+                const o = ac.createOscillator();
+                const g = ac.createGain();
+                o.connect(g);
+                g.connect(ac.destination);
+                o.type = 'square';
+                o.frequency.setValueAtTime(700 + Math.random() * 300, ac.currentTime + t);
+                g.gain.setValueAtTime(0.12, ac.currentTime + t);
+                g.gain.exponentialRampToValueAtTime(0.001, ac.currentTime + t + 0.035);
+                o.start(ac.currentTime + t);
+                o.stop(ac.currentTime + t + 0.04);
+                t += gap;
+            });
+
+            // Victory ding — C E G chord
+            [[1047, 0], [1319, 0.13], [1568, 0.26]].forEach(([freq, offset]) => {
+                const o = ac.createOscillator();
+                const g = ac.createGain();
+                o.connect(g);
+                g.connect(ac.destination);
+                o.type = 'sine';
+                o.frequency.value = freq;
+                const st = ac.currentTime + t + offset;
+                g.gain.setValueAtTime(0.28, st);
+                g.gain.exponentialRampToValueAtTime(0.001, st + 0.55);
+                o.start(st);
+                o.stop(st + 0.6);
+            });
+        } catch(e) {}
+    }
+
+    // ── Init ──────────────────────────────────────────────────────
     const saved = loadState();
 
     if (saved && saved.playerName) {
-        // Restore everything from cache
         playerName = saved.playerName;
-        remaining  = saved.remaining  ?? [];
-        drawn      = saved.drawn      ?? [];
-        log        = saved.log        ?? [];
-        lastDrawn  = saved.lastDrawn  ?? null;
+        remaining  = saved.remaining ?? [];
+        drawn      = saved.drawn     ?? [];
+        log        = saved.log       ?? [];
+        lastDrawn  = saved.lastDrawn ?? null;
 
         document.getElementById('nameOverlay').classList.add('hidden');
         document.getElementById('playerNameDisplay').textContent = playerName;
         restoreCardDisplay();
     } else {
-        // First visit — fresh deck, show name prompt
         freshDeck();
         document.getElementById('nameInput').focus();
     }
