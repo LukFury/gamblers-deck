@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Gambler's Deck</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background-color: #0d0a06;
+            background-image: radial-gradient(ellipse at 50% 30%, #1e1508 0%, #0d0a06 65%);
+            color: #e8d5a3;
+            font-family: 'Crimson Text', Georgia, serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 36px 20px 48px;
+        }
+
+        /* Noise texture overlay */
+        body::after {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .container {
+            position: relative;
+            z-index: 1;
+            width: 100%;
+            max-width: 520px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0;
+        }
+
+        /* ── Title ── */
+        h1 {
+            font-family: 'Cinzel', serif;
+            font-size: clamp(2rem, 6vw, 2.8rem);
+            font-weight: 900;
+            color: #c9a227;
+            text-align: center;
+            letter-spacing: 4px;
+            text-shadow: 0 0 30px rgba(201,162,39,0.45), 0 2px 6px rgba(0,0,0,0.9);
+            margin-bottom: 5px;
+        }
+
+        .subtitle {
+            font-style: italic;
+            color: #6b5530;
+            font-size: 1rem;
+            letter-spacing: 1px;
+            margin-bottom: 22px;
+        }
+
+        /* ── Ornamental divider ── */
+        .divider {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            width: 100%;
+            margin: 18px 0;
+        }
+        .divider::before, .divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: linear-gradient(to right, transparent, #6b4f1a, transparent);
+        }
+        .divider span { color: #c9a227; font-size: 0.65rem; }
+
+        /* ── Central card display ── */
+        .card-stage {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 18px;
+            width: 100%;
+        }
+
+        .drawn-card {
+            width: 148px;
+            height: 210px;
+            border: 2px solid #c9a227;
+            border-radius: 12px;
+            background: linear-gradient(160deg, #241a0a 0%, #130e05 100%);
+            box-shadow:
+                0 0 40px rgba(201,162,39,0.2),
+                0 10px 40px rgba(0,0,0,0.85),
+                inset 0 0 24px rgba(0,0,0,0.6);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Inner border inset */
+        .drawn-card::before {
+            content: '';
+            position: absolute;
+            inset: 7px;
+            border: 1px solid rgba(201,162,39,0.25);
+            border-radius: 7px;
+            pointer-events: none;
+        }
+
+        /* Corner filigree */
+        .corner {
+            position: absolute;
+            font-family: 'Cinzel', serif;
+            font-size: 0.8rem;
+            color: rgba(201,162,39,0.65);
+            line-height: 1;
+            width: 24px;
+            text-align: center;
+        }
+        .corner.tl { top: 11px; left: 12px; }
+        .corner.br { bottom: 11px; right: 12px; transform: rotate(180deg); }
+
+        .card-number {
+            font-family: 'Cinzel', serif;
+            font-size: 5rem;
+            font-weight: 900;
+            color: #e8c842;
+            text-shadow: 0 0 24px rgba(232,200,66,0.55), 0 2px 8px rgba(0,0,0,0.9);
+            line-height: 1;
+            transition: all 0.15s ease;
+        }
+
+        .card-number.empty {
+            font-size: 2.5rem;
+            color: #2e2410;
+            text-shadow: none;
+            font-style: italic;
+            font-family: 'Crimson Text', serif;
+        }
+
+        .card-sublabel {
+            font-style: italic;
+            font-size: 0.8rem;
+            color: #5a4520;
+            margin-top: 7px;
+            letter-spacing: 0.5px;
+        }
+
+        /* ── Counter ── */
+        .counter {
+            font-family: 'Cinzel', serif;
+            font-size: 1rem;
+            letter-spacing: 3px;
+            color: #9a7830;
+            text-align: center;
+        }
+        .counter .count-num { color: #c9a227; font-size: 1.2rem; }
+        .counter .count-num.zero { color: #7a1a1a; }
+
+        /* ── Draw button ── */
+        .btn-draw {
+            font-family: 'Cinzel', serif;
+            font-size: 1.15rem;
+            font-weight: 700;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            color: #1a1005;
+            background: linear-gradient(160deg, #e8c842 0%, #c9a227 55%, #9a7a18 100%);
+            border: none;
+            border-radius: 6px;
+            padding: 13px 52px;
+            cursor: pointer;
+            box-shadow: 0 4px 20px rgba(201,162,39,0.35), inset 0 1px 0 rgba(255,255,255,0.18);
+            transition: transform 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease;
+        }
+        .btn-draw:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 28px rgba(201,162,39,0.5), inset 0 1px 0 rgba(255,255,255,0.18);
+            filter: brightness(1.08);
+        }
+        .btn-draw:active:not(:disabled) { transform: translateY(1px); filter: brightness(0.95); }
+        .btn-draw:disabled { opacity: 0.3; cursor: not-allowed; }
+
+        /* ── Grid ── */
+        .section-label {
+            font-family: 'Cinzel', serif;
+            font-size: 0.72rem;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: #5a4520;
+            text-align: center;
+            margin-bottom: 12px;
+        }
+
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 9px;
+            width: 100%;
+            max-width: 340px;
+        }
+
+        .gc {
+            aspect-ratio: 3/4;
+            border: 1px solid #2e2410;
+            border-radius: 7px;
+            background: linear-gradient(150deg, #1c1508, #110d04);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Cinzel', serif;
+            font-size: 1.05rem;
+            font-weight: 600;
+            color: #b08a28;
+            box-shadow: inset 0 1px 4px rgba(0,0,0,0.6);
+            position: relative;
+            transition: border-color 0.3s, color 0.3s, background 0.3s;
+            user-select: none;
+        }
+
+        .gc.drawn {
+            background: linear-gradient(150deg, #0e0a04, #0a0703);
+            border-color: #1a1208;
+            color: transparent;
+        }
+
+        .gc.drawn::after {
+            content: '✕';
+            position: absolute;
+            font-size: 1.2rem;
+            color: #2a1e0e;
+            font-family: sans-serif;
+            font-weight: 300;
+        }
+
+        .gc.last {
+            border-color: #c9a227;
+            box-shadow: 0 0 10px rgba(201,162,39,0.3), inset 0 1px 4px rgba(0,0,0,0.6);
+        }
+
+        /* ── Draw log ── */
+        .log-list {
+            list-style: none;
+            width: 100%;
+            max-width: 340px;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .log-entry {
+            font-size: 0.95rem;
+            color: #5a4520;
+            padding: 4px 12px;
+            border-left: 2px solid #221a08;
+            transition: color 0.3s, border-color 0.3s;
+        }
+        .log-entry:first-child { color: #c9a227; border-left-color: #c9a227; }
+        .log-entry.empty { font-style: italic; color: #2e2410; border-color: transparent; }
+
+        /* ── Long rest button ── */
+        .btn-rest {
+            font-family: 'Cinzel', serif;
+            font-size: 0.78rem;
+            letter-spacing: 2.5px;
+            text-transform: uppercase;
+            color: #5a4520;
+            background: transparent;
+            border: 1px solid #2e2410;
+            border-radius: 5px;
+            padding: 9px 24px;
+            cursor: pointer;
+            transition: color 0.2s, border-color 0.2s, box-shadow 0.2s;
+        }
+        .btn-rest:hover {
+            color: #c9a227;
+            border-color: #6b4f1a;
+            box-shadow: 0 0 12px rgba(201,162,39,0.15);
+        }
+
+        /* ── Draw animation ── */
+        @keyframes cardReveal {
+            0%   { opacity: 0; transform: scale(0.75) rotateY(25deg); }
+            55%  { transform: scale(1.06) rotateY(0); opacity: 1; }
+            100% { transform: scale(1) rotateY(0); opacity: 1; }
+        }
+        .drawn-card.pop { animation: cardReveal 0.42s cubic-bezier(0.22, 0.61, 0.36, 1) forwards; }
+
+        /* ── Footer ── */
+        .footer-note {
+            font-style: italic;
+            font-size: 0.75rem;
+            color: #2a1e0e;
+            margin-top: 28px;
+            letter-spacing: 0.5px;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+
+    <h1>The Gambler's Deck</h1>
+    <p class="subtitle">Draw your fate — fortune favours the bold</p>
+
+    <div class="divider"><span>◆</span></div>
+
+    <!-- Card display + controls -->
+    <div class="card-stage">
+        <div class="drawn-card" id="drawnCard">
+            <span class="corner tl" id="cornerTL"></span>
+            <span class="card-number empty" id="cardNumber">—</span>
+            <span class="card-sublabel" id="cardSub">awaiting fate</span>
+            <span class="corner br" id="cornerBR"></span>
+        </div>
+
+        <div class="counter">
+            <span class="count-num" id="remainCount">20</span> / 20 remaining
+        </div>
+
+        <button class="btn-draw" id="btnDraw" onclick="drawCard()">Draw</button>
+    </div>
+
+    <div class="divider"><span>◆</span></div>
+
+    <!-- Grid -->
+    <p class="section-label">The Deck</p>
+    <div class="card-grid" id="cardGrid"></div>
+
+    <div class="divider"><span>◆</span></div>
+
+    <!-- Log -->
+    <p class="section-label">Recent Draws</p>
+    <ul class="log-list" id="drawLog">
+        <li class="log-entry empty">No cards drawn yet…</li>
+    </ul>
+
+    <!-- Long rest -->
+    <button class="btn-rest" onclick="longRest()" style="margin-top:28px">⟳ &nbsp;Long Rest — Reshuffle</button>
+
+    <p class="footer-note">20 cards · no replacement · reshuffles on long rest</p>
+
+</div>
+
+<script>
+    let remaining = [];
+    let drawn     = [];
+    let log       = [];
+    let lastDrawn = null;
+
+    function reset() {
+        remaining = Array.from({ length: 20 }, (_, i) => i + 1);
+        drawn     = [];
+        log       = [];
+        lastDrawn = null;
+    }
+
+    function drawCard() {
+        if (remaining.length === 0) return;
+
+        const idx  = Math.floor(Math.random() * remaining.length);
+        const card = remaining.splice(idx, 1)[0];
+        drawn.push(card);
+        lastDrawn = card;
+        log.push({ n: drawn.length, card });
+
+        // Update central display
+        const numEl = document.getElementById('cardNumber');
+        numEl.textContent = card;
+        numEl.className   = 'card-number';
+
+        document.getElementById('cornerTL').textContent = card;
+        document.getElementById('cornerBR').textContent = card;
+        document.getElementById('cardSub').textContent  =
+            drawn.length === 1 ? 'first draw' : `draw #${drawn.length}`;
+
+        // Pop animation
+        const cardEl = document.getElementById('drawnCard');
+        cardEl.classList.remove('pop');
+        void cardEl.offsetWidth;   // force reflow
+        cardEl.classList.add('pop');
+
+        render();
+    }
+
+    function longRest() {
+        reset();
+
+        const numEl = document.getElementById('cardNumber');
+        numEl.textContent = '—';
+        numEl.className   = 'card-number empty';
+
+        document.getElementById('cornerTL').textContent = '';
+        document.getElementById('cornerBR').textContent = '';
+        document.getElementById('cardSub').textContent  = 'awaiting fate';
+
+        render();
+    }
+
+    function render() {
+        renderGrid();
+        renderLog();
+        renderCounter();
+    }
+
+    function renderGrid() {
+        const grid = document.getElementById('cardGrid');
+        grid.innerHTML = '';
+        for (let i = 1; i <= 20; i++) {
+            const cell = document.createElement('div');
+            cell.className = 'gc'
+                + (drawn.includes(i) ? ' drawn' : '')
+                + (i === lastDrawn    ? ' last'  : '');
+            cell.textContent = i;
+            grid.appendChild(cell);
+        }
+    }
+
+    function renderLog() {
+        const ul = document.getElementById('drawLog');
+        ul.innerHTML = '';
+
+        if (log.length === 0) {
+            ul.innerHTML = '<li class="log-entry empty">No cards drawn yet…</li>';
+            return;
+        }
+
+        // Last 5, most recent first
+        const recent = log.slice(-5).reverse();
+        recent.forEach(entry => {
+            const li = document.createElement('li');
+            li.className    = 'log-entry';
+            li.textContent  = `Draw ${entry.n}:  Card ${entry.card}`;
+            ul.appendChild(li);
+        });
+    }
+
+    function renderCounter() {
+        const el = document.getElementById('remainCount');
+        el.textContent = remaining.length;
+        el.className   = 'count-num' + (remaining.length === 0 ? ' zero' : '');
+        document.getElementById('btnDraw').disabled = remaining.length === 0;
+    }
+
+    // Init
+    reset();
+    render();
+</script>
+</body>
+</html>
